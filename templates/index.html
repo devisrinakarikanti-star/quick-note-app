@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Note App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Quick Note Application</h1>
+
+    <textarea id="noteInput" placeholder="Write your note here..."></textarea>
+
+    <button onclick="saveNote()">Save Note</button>
+
+    <h2>Saved Notes</h2>
+
+    <div id="notes">
+        {% for note in notes %}
+        <div class="note-card">
+            {{ note[1] }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function saveNote() {
+    let note = document.getElementById("noteInput").value;
+
+    if (note.trim() === "") {
+        alert("Please enter a note");
+        return;
+    }
+
+    fetch("/add_note", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            note: note
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        location.reload();
+    });
+}
+</script>
+
+</body>
+</html>
